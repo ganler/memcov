@@ -14,8 +14,8 @@ void mcov_set_total(uint32_t t) noexcept {
     mem_coverage.total = t;
 }
 
-char* mcov_hitmap_ptr() noexcept {
-    return mem_coverage.visited_bb;
+void mcov_copy_hitmap(char* ptr) noexcept {
+    std::memcpy(ptr, mem_coverage.visited_bb, mem_coverage.total);
 }
 
 void mcov_set_hitmap(char* ptr) noexcept {
