@@ -1,7 +1,5 @@
 #pragma once
 
-namespace memcov {
-
 // NOTE: Try not to include other functions.
 struct coverage_container {
     uint32_t total = 0;
@@ -9,6 +7,4 @@ struct coverage_container {
     char* visited_bb = nullptr;
 };
 
-inline coverage_container coverage;
-
-}
+extern "C" coverage_container mem_coverage;

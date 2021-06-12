@@ -1,33 +1,34 @@
-#include "../include/memcov.hpp"
+#include <cstdint>
 #include "coverage_struct.hpp"
 
-namespace memcov {
+extern "C" {
 
-void set_now(uint32_t n) noexcept {
-    coverage.now = n;
+coverage_container mem_coverage;
 
+void mcov_set_now(uint32_t n) noexcept {
+    mem_coverage.now = n;
 }
 
-void set_total(uint32_t t) noexcept {
-    coverage.total = t;
+void mcov_set_total(uint32_t t) noexcept {
+    mem_coverage.total = t;
 }
 
-char* ptr() noexcept {
-    return coverage.visited_bb;
+char* mcov_ptr() noexcept {
+    return mem_coverage.visited_bb;
 }
 
-uint32_t get_now() noexcept {
-    return coverage.now;
+uint32_t mcov_get_now() noexcept {
+    return mem_coverage.now;
 }
 
-uint32_t get_total() noexcept {
-    return coverage.total;
+uint32_t mcov_get_total() noexcept {
+    return mem_coverage.total;
 }
 
-void reset() noexcept {
-    coverage.now = 0;
-    for (int i = 0; i < coverage.total; ++i) {
-        coverage.visited_bb[i] = false;
+void mcov_reset() noexcept {
+    mem_coverage.now = 0;
+    for (int i = 0; i < mem_coverage.total; ++i) {
+        mem_coverage.visited_bb[i] = false;
     }
 }
 
