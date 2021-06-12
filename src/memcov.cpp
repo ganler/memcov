@@ -3,6 +3,10 @@
 
 namespace memcov {
 
+const uint8_t* ptr() noexcept {
+    return coverage.visited_bb;
+}
+
 uint32_t now() noexcept {
     return coverage.now;
 }

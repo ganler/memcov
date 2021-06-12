@@ -27,7 +27,7 @@ extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *s
     for (uint32_t *x = start; x < stop; x++)
         *x = ++coverage.total;  // Guards should start from 1.
     printf("> INIT:: # BB in this DSO: %d; # BB total: %d\n", coverage.total - prev_total, coverage.total);
-    coverage.visited_bb = (bool*)calloc(coverage.total, sizeof(bool));
+    coverage.visited_bb = (uint8_t*)calloc(coverage.total, sizeof(uint8_t));
 }
 
 /// Called per BasicBlock.
