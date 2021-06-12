@@ -8,9 +8,13 @@
 
 namespace memcov {
 
-const uint8_t* ptr() noexcept;
+char* ptr() noexcept;
 void reset() noexcept;
-uint32_t now() noexcept;
-uint32_t total() noexcept;
+
+uint32_t get_now() noexcept;
+uint32_t get_total() noexcept;
+
+void set_now(uint32_t) noexcept;
+void set_total(uint32_t) noexcept;
 
 }

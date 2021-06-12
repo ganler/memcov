@@ -3,15 +3,24 @@
 
 namespace memcov {
 
-const uint8_t* ptr() noexcept {
+void set_now(uint32_t n) noexcept {
+    coverage.now = n;
+
+}
+
+void set_total(uint32_t t) noexcept {
+    coverage.total = t;
+}
+
+char* ptr() noexcept {
     return coverage.visited_bb;
 }
 
-uint32_t now() noexcept {
+uint32_t get_now() noexcept {
     return coverage.now;
 }
 
-uint32_t total() noexcept {
+uint32_t get_total() noexcept {
     return coverage.total;
 }
 
