@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstring>
 #include "coverage_struct.hpp"
 
 extern "C" {
@@ -13,8 +14,12 @@ void mcov_set_total(uint32_t t) noexcept {
     mem_coverage.total = t;
 }
 
-char* mcov_ptr() noexcept {
+char* mcov_hitmap_ptr() noexcept {
     return mem_coverage.visited_bb;
+}
+
+void mcov_set_hitmap(char* ptr) noexcept {
+    std::memcpy(mem_coverage.visited_bb, ptr, mem_coverage.total);
 }
 
 uint32_t mcov_get_now() noexcept {
