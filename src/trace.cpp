@@ -3,8 +3,7 @@
  * Introducing many standard or even 3rd-party libraries will mess the tracing part.
  * `///` comment by Jiawei.
  */
-#include <_types/_uint32_t.h>
-#include <_types/_uint8_t.h>
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -23,12 +22,12 @@
 extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *stop) {
     if (start == stop || *start) return;  // Initialize only once.
     /// managed to be compatible with multiple DSOs.
-    uint32_t prev_total = mem_coverage.total;
+    uint32_t prev_total = mcov_total;
     for (uint32_t *x = start; x < stop; x++)
-        *x = ++mem_coverage.total;  // Guards should start from 1.
-    printf("> INIT:: # BB in this DSO: %d; # BB total: %d\n", mem_coverage.total - prev_total, mem_coverage.total);
-    mem_coverage.storage_size = (mem_coverage.total + 7) / 8;
-    mem_coverage.storage = (uint8_t*)calloc(mem_coverage.storage_size, sizeof(char));
+        *x = ++mcov_total;  // Guards should start from 1.
+    printf("> INIT:: # BB in this DSO: %d; # BB total: %d\n", mcov_total - prev_total, mcov_total);
+    mem_coverage.storage_size = (mcov_total + 7) / 8;
+    mem_coverage.storage = (uint8_t*)calloc(mem_coverage.storage_size, sizeof(uint8_t));
 }
 
 /// Called per BasicBlock.
