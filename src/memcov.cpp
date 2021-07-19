@@ -1,10 +1,12 @@
+#include <_types/_uint32_t.h>
 #include <cstdint>
 #include <cstring>
+
 #include "coverage_struct.hpp"
 
 extern "C" {
 
-coverage_container mem_coverage;
+mcov_t mem_coverage;
 
 void mcov_set_now(uint32_t n) noexcept {
     mem_coverage.now = n;
@@ -15,11 +17,11 @@ void mcov_set_total(uint32_t t) noexcept {
 }
 
 void mcov_copy_hitmap(char* ptr) noexcept {
-    std::memcpy(ptr, mem_coverage.visited_bb, mem_coverage.total);
+    std::memcpy(ptr, mem_coverage.storage, mem_coverage.storage_size);
 }
 
 void mcov_set_hitmap(char* ptr) noexcept {
-    std::memcpy(mem_coverage.visited_bb, ptr, mem_coverage.total);
+    std::memcpy(mem_coverage.storage, ptr, mem_coverage.storage_size);
 }
 
 uint32_t mcov_get_now() noexcept {
@@ -32,9 +34,7 @@ uint32_t mcov_get_total() noexcept {
 
 void mcov_reset() noexcept {
     mem_coverage.now = 0;
-    for (int i = 0; i < mem_coverage.total; ++i) {
-        mem_coverage.visited_bb[i] = false;
-    }
+    std::memset(mem_coverage.storage, 0, mem_coverage.storage_size);
 }
 
 }

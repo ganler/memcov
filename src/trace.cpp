@@ -3,6 +3,8 @@
  * Introducing many standard or even 3rd-party libraries will mess the tracing part.
  * `///` comment by Jiawei.
  */
+#include <_types/_uint32_t.h>
+#include <_types/_uint8_t.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -25,7 +27,8 @@ extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *s
     for (uint32_t *x = start; x < stop; x++)
         *x = ++mem_coverage.total;  // Guards should start from 1.
     printf("> INIT:: # BB in this DSO: %d; # BB total: %d\n", mem_coverage.total - prev_total, mem_coverage.total);
-    mem_coverage.visited_bb = (char*)calloc(mem_coverage.total, sizeof(char));
+    mem_coverage.storage_size = (mem_coverage.total + 7) / 8;
+    mem_coverage.storage = (uint8_t*)calloc(mem_coverage.storage_size, sizeof(char));
 }
 
 /// Called per BasicBlock.
@@ -38,8 +41,11 @@ extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *s
 //    __sanitizer_cov_trace_pc_guard(guard);
 extern "C" void __sanitizer_cov_trace_pc_guard(uint32_t *guard) {
     if (!*guard) return;  // Duplicate the guard check.
-    if (!mem_coverage.visited_bb[*guard]) {
-        mem_coverage.visited_bb[*guard] = true;
+    const uint32_t idx = *guard;
+    const uint32_t bit_idx = idx % 8;
+    uint8_t& target_byte = mem_coverage.storage[idx / 8];
+    if (~(target_byte >> bit_idx) & 0x1) {
+        target_byte |= (1 << bit_idx);
         ++mem_coverage.now;
     }
 }
