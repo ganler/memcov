@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <cstring>
 #include <cstdlib>
+#include <cstdio>
 #include <utility>
 
 #include "coverage_struct.hpp"
