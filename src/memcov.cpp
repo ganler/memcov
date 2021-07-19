@@ -17,6 +17,7 @@ static mcov_t mcov_make_coverage() noexcept {
     mcov_t new_cov;
     new_cov.storage_size = (mcov_total + 7) / 8;
     new_cov.storage = (uint8_t*)std::malloc(mem_coverage.storage_size * sizeof(uint8_t));
+    std::memset(new_cov.storage, 0, new_cov.storage_size);
     return new_cov;
 }
 
