@@ -1,0 +1,1 @@
+Quickly allow you to monitor/control in-memory coverage.

@@ -12,7 +12,6 @@
 #include "coverage_struct.hpp"
 
 /// Called when entering a module (something like Compilation Unit).
-/// (*start) contains an index to each basic block (index starting from 1).
 /// By setting the index to `0` may stop tracing related BasicBlock at runtime.
 // This callback is inserted by the compiler as a module constructor
 // into every DSO. 'start' and 'stop' correspond to the
@@ -30,7 +29,6 @@ extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *s
     mem_coverage.storage = (uint8_t*)calloc(mem_coverage.storage_size, sizeof(uint8_t));
 }
 
-/// Called per BasicBlock.
 // This callback is inserted by the compiler on every edge in the
 // control flow (some optimizations apply).
 // Typically, the compiler will emit the code like this:

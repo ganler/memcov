@@ -14,5 +14,5 @@ SET_PROPERTY(TARGET memcov-container PROPERTY POSITION_INDEPENDENT_CODE ON)
 # Define the coverage behavior.
 ADD_LIBRARY(memcov SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/trace.cpp)
 TARGET_LINK_LIBRARIES(memcov PUBLIC memcov-container)
-TARGET_COMPILE_OPTIONS(memcov PRIVATE -fsanitize-coverage=trace-pc-guard)
+TARGET_COMPILE_OPTIONS(memcov PRIVATE -fsanitize-coverage=edge,trace-pc-guard)
 
