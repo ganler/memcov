@@ -24,7 +24,8 @@ extern "C" void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *s
     uint32_t prev_total = mcov_total;
     for (uint32_t *x = start; x < stop; x++)
         *x = ++mcov_total;  // Guards should start from 1.
-    printf("> INIT:: # BB in this DSO: %d; # BB total: %d\n", mcov_total - prev_total, mcov_total);
+    // By default, coverage sanitizer enables edge coverage.
+    printf("> INIT:: # CFG edge in this DSO: %d; # CFG edge total: %d\n", mcov_total - prev_total, mcov_total);
     mem_coverage.storage_size = (mcov_total + 7) / 8;
     mem_coverage.storage = (uint8_t*)calloc(mem_coverage.storage_size, sizeof(uint8_t));
 }
