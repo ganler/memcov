@@ -8,11 +8,27 @@ SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
-ADD_LIBRARY(memcov-container STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/memcov.cpp)
-SET_PROPERTY(TARGET memcov-container PROPERTY POSITION_INDEPENDENT_CODE ON)
-
 # Define the coverage behavior.
-ADD_LIBRARY(memcov SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/trace.cpp)
-TARGET_LINK_LIBRARIES(memcov PUBLIC memcov-container)
-TARGET_COMPILE_OPTIONS(memcov PRIVATE -fsanitize-coverage=edge,trace-pc-guard)
+ADD_LIBRARY(memcov SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/trace.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/memcov.cpp)
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/trace.cpp 
+    PROPERTIES COMPILE_OPTIONS
+    -fsanitize-coverage=edge,trace-pc-guard)
 
+TARGET_INCLUDE_DIRECTORIES(memcov
+                           PUBLIC
+                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+                           "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+INSTALL(TARGETS  memcov
+    EXPORT memcovTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+INSTALL(EXPORT memcovTargets
+        FILE memcovTargets.cmake
+        NAMESPACE memcov::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/memcovTargets
+)
