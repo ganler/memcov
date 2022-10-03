@@ -7,6 +7,7 @@ INCLUDE(FetchContent)
 FetchContent_Declare(
     memcov
     GIT_REPOSITORY https://github.com/ganler/memcov.git
+    GIT_TAG        origin/bitmap
 )
 
 FetchContent_GetProperties(memcov)

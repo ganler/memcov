@@ -3,11 +3,11 @@
 // NOTE: Try not to include other functions.
 #include <cstdint>
 
-struct mcov_t {
-    uint32_t now = 0;
-    uint32_t storage_size = 0;
-    uint8_t* storage = nullptr;
+struct bitmap_t {
+    uint32_t hitbits = 0;
+    uint32_t byte_size = 0;
+    uint8_t* bytes = nullptr;
 };
 
-extern "C" mcov_t mem_coverage;
+extern "C" bitmap_t mcov_bitmap;
 extern "C" uint32_t mcov_total;
