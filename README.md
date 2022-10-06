@@ -29,32 +29,40 @@ TARGET_LINK_LIBRARIES(YOUR_TARGET PRIVATE memcov)
 
 ## **\[Python\]** Add Interface to Operate/Monitor Coverage
 
+First use this code in your codebase (will be made a Python package soon).
+
 ```python
 import ctypes
 
-_LIB = ctypes.CDLL('/PATH/TO/YOUR_LIB.so')
 
-# calling `reset`, the coverage will not be ZERO (but very small, e.g., 6).
-reset = _LIB.mcov_reset
+class Memcov:
+    def __init__(self, mcov_lib: ctypes.CDLL):
+        self.get_hitbits = mcov_lib.mcov_get_hitbits
+        self.set_hitbits = mcov_lib.mcov_set_hitbits
+        self.reset_bitmap = mcov_lib.mcov_reset_bitmap
+        self.get_bitmap_bytes = mcov_lib.mcov_get_bitmap_bytes
 
-push = _LIB.mcov_push_coverage
-pop = _LIB.mcov_pop_coverage
+        self._char_array = ctypes.c_char * self.get_bitmap_bytes()
+        self._mcov_copy_bitmap = mcov_lib.mcov_copy_bitmap
+        self._mcov_set_bitmap = mcov_lib.mcov_set_bitmap
 
-get_total = _LIB.mcov_get_total
-get_now = _LIB.mcov_get_now
+    def get_hitmap_buffer(self) -> bytes:
+        hitmap_buffer = bytearray(self.get_bitmap_bytes())
+        self._mcov_copy_bitmap(self._char_array.from_buffer(hitmap_buffer))
+        return hitmap_buffer
 
-set_now = _LIB.mcov_set_now
+    def set_hitmap_buffer(self, data: bytes):
+        assert len(data) == self.get_bitmap_bytes()
+        self._mcov_set_bitmap(self._char_array.from_buffer(data))
+```
 
-_char_array = ctypes.c_char * get_total()
+## Example: coverage-driven mutation-based fuzzing
 
+```python
+cov = Memcov("/PATH/TO/THE/.SO")
 
-def get_hitmap():
-    hitmap_buffer = bytearray(get_total())
-    _LIB.mcov_copy_hitmap(_char_array.from_buffer(hitmap_buffer))
-    return hitmap_buffer
-
-
-def set_hitmap(data):
-    assert len(data) == get_total()
-    _LIB.mcov_set_hitmap(_char_array.from_buffer(data))
+last_hits = cov.get_hitbits()
+# ... some tests.
+if last_hits != cov.get_hitbits(): # coverage changed.
+    pass # ... do some mutation...
 ```
