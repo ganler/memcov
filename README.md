@@ -27,6 +27,16 @@ set_source_files_properties(
 TARGET_LINK_LIBRARIES(YOUR_TARGET PRIVATE memcov)
 ```
 
+Examples:
+
+- [TVM](https://gist.github.com/ganler/1c58a7795211f0e11413f97a14af9f36)
+
+```shell
+# Install the patch to the corresponding systems.
+cd /path/to/compiler # say tvm's github repo.
+patch -p1 < /path/to/patch
+```
+
 ## **\[Python\]** Add Interface to Operate/Monitor Coverage
 
 First use this code in your codebase (will be made a Python package soon).
@@ -59,7 +69,10 @@ class Memcov:
 ## Example: coverage-driven mutation-based fuzzing
 
 ```python
-cov = Memcov("/PATH/TO/THE/.SO")
+from ctypes import CDLL
+
+lib = CDLL("/PATH/TO/THE/.SO")
+cov = Memcov(lib)
 
 last_hits = cov.get_hitbits()
 # ... some tests.
